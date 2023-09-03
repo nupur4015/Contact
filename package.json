@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "configure": "C:/Users/nuprs/OneDrive/Desktop/bitespeed/bin/configuredb.sh" 
+    "configure": "C:/Users/nuprs/OneDrive/Desktop/bitespeed/bin/configuredb.sh" ,
+    "start": "node C:/Users/nuprs/OneDrive/Desktop/bitespeed/bin/www",
+    "dev": "nodemon C:/Users/nuprs/OneDrive/Desktop/bitespeed/bin/www"
   },
   "author": "",
   "license": "ISC",
