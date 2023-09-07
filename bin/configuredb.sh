@@ -1,35 +1,14 @@
 #!/bin/bash
 
-database="contactdb"
-username="node_user"
-password="nupur1234"
+# Replace these with your Render database connection details
+DATABASE_URL="postgres://node_user:26llItWWGupHbdlfgDOaGXbKuZGWYAih@dpg-cjsqf1u3m8ac73fa46q0-a.oregon-postgres.render.com/contactdb_tfka"
 sql_script="C:/Users/nuprs/OneDrive/Desktop/bitespeed/bin/sql/contact.sql"
 
-# Set the PGPASSWORD environment variable with the password
-export PGPASSWORD="$password"
 
-echo "Configuring database: $database"
-
-# Drop and create the database
-dropdb.exe -U $username -h localhost -p 5432 -e $database
-
-# Check the exit status of the previous command
-if [ $? -ne 0 ]; then
-    echo "Error dropping the database."
-    exit 1
-fi
-
-# Create the database
-createdb.exe -U $username -h localhost -p 5432 -e $database
-
-# Check the exit status of the previous command
-if [ $? -ne 0 ]; then
-    echo "Error creating the database."
-    exit 1
-fi
+echo "Configuring database using Render PostgreSQL: $DATABASE_URL"
 
 # Use backslashes for the path to your SQL file
-psql.exe -U $username -h localhost -p 5432 -d $database -a -f "$sql_script"
+psql.exe "$DATABASE_URL" -a -f "$sql_script"
 
 # Check the exit status of the previous command
 if [ $? -ne 0 ]; then
@@ -37,16 +16,13 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# Unset the PGPASSWORD environment variable
-
-
 # Check if the table exists in the database (replace 'your_table_name' with the actual table name)
-table_exists=$(psql.exe -U $username -h localhost -p 5432 -d $database -c "\dt contact" | grep "1 row")
+table_exists=$(psql.exe "$DATABASE_URL" -c "\dt contact" | grep "1 row")
 
 if [ -n "$table_exists" ]; then
     echo "Table contact has been created successfully."
 else
     echo "Table contact was not created."
 fi
-unset PGPASSWORD
-echo "$database configured"
+
+echo "Database configuration completed."
