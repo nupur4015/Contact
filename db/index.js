@@ -1,10 +1,10 @@
 const { Pool } = require('pg');
 
 const pool = new Pool({ 
-    user: 'node_user', 
-    host: 'localhost', 
-    database: 'contactdb', 
-    password: 'nupur1234', 
+    user: 'hggdocqp', 
+    host: 'bubble.db.elephantsql.com', 
+    database: 'hggdocqp', 
+    password: 'a92BLoYLgAhJAmR3-nWVfSsKOH1OQJUU', 
     port:'5432' 
 });
 

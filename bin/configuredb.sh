@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # Replace these with your Render database connection details
-DATABASE_URL="postgres://node_user:26llItWWGupHbdlfgDOaGXbKuZGWYAih@dpg-cjsqf1u3m8ac73fa46q0-a.oregon-postgres.render.com/contactdb_tfka"
+DATABASE_URL="postgres://hggdocqp:a92BLoYLgAhJAmR3-nWVfSsKOH1OQJUU@bubble.db.elephantsql.com/hggdocqp"
 sql_script="C:/Users/nuprs/OneDrive/Desktop/bitespeed/bin/sql/contact.sql"
 
 
-echo "Configuring database using Render PostgreSQL: $DATABASE_URL"
+echo "Configuring database using elephantsql PostgreSQL: $DATABASE_URL"
 
 # Use backslashes for the path to your SQL file
 psql.exe "$DATABASE_URL" -a -f "$sql_script"
