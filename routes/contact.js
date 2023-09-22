@@ -180,12 +180,15 @@ router.post("/identify", (request, response, next) => {
     console.log(existenceStatus);
     if (existenceStatus == "none_exist" || ( existenceStatus == "phone_number_exists" & email==null ) || ( existenceStatus == "email_exists" & phoneNumber==null ) ) {
       const linkprecedence = "primary";
+      if(existenceStatus=="none_exist"){
       pool.query(
         "INSERT INTO contact (phoneNumber, email, linkPrecedence) VALUES ($1, $2, $3)",
         [phoneNumber, email, linkprecedence],
         (err, res) => {
           //console.log(res);
           if (err) return next(err);
+        });
+      }
           if(email!=null){
           getContactDataByemail(email)
             .then((res) => {
@@ -205,8 +208,6 @@ router.post("/identify", (request, response, next) => {
             });
           
         }
-      }
-      );
     } else if (existenceStatus == "email_exists") {
       // Execute the query with placeholders
       pool.query(query2, [email], (error, result) => {
