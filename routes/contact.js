@@ -5,16 +5,30 @@ async function getContactDataById(primaryContactId) {
   try {
     // Retrieve data for the primary contact and its associated secondary contacts
     const query = `
-            SELECT
-                id AS "primaryContactId",
-                ARRAY(SELECT DISTINCT email FROM Contact WHERE id = $1 OR linkedId=$1 AND email IS NOT NULL) AS "emails",
-                ARRAY(SELECT DISTINCT phoneNumber FROM Contact WHERE id = $1 or linkedId=$1 And phoneNumber IS NOT NULL) AS "phoneNumbers",
-                ARRAY(SELECT DISTINCT id FROM Contact WHERE linkedId = $1) AS "secondaryContactIds"
-            FROM
-                Contact
-            WHERE
-                id = $1;
-        `;
+    SELECT
+        id AS "primaryContactId",
+        ARRAY(
+            SELECT DISTINCT email
+            FROM Contact
+            WHERE (id = $1 OR linkedId = $1)
+            AND email IS NOT NULL
+        ) AS "emails",
+        ARRAY(
+            SELECT DISTINCT phoneNumber
+            FROM Contact
+            WHERE (id = $1 OR linkedId = $1)
+            AND phoneNumber IS NOT NULL
+        ) AS "phoneNumbers",
+        ARRAY(
+            SELECT DISTINCT id
+            FROM Contact
+            WHERE linkedId = $1
+        ) AS "secondaryContactIds"
+    FROM Contact
+    WHERE id = $1;
+`;
+
+
 
     const result = await pool.query(query, [primaryContactId]);
 
@@ -41,16 +55,31 @@ async function getContactDataByemail(email) {
   try {
     // Retrieve data for the primary contact and its associated secondary contacts
     const query = `
-          SELECT
-          c.id AS "primaryContactId",
-            ARRAY(SELECT DISTINCT email FROM Contact WHERE id = c.id AND email IS NOT NULL) AS "emails",
-            ARRAY(SELECT DISTINCT phoneNumber FROM Contact WHERE id = c.id AND phoneNumber IS NOT NULL) AS "phoneNumbers",
-            ARRAY(SELECT DISTINCT id FROM Contact WHERE linkedId = c.id) AS "secondaryContactIds"
-          FROM
-            Contact c
-          WHERE
-          c.email = $1;
-                          `;
+    SELECT
+        c.id AS "primaryContactId",
+        ARRAY(
+            SELECT DISTINCT email
+            FROM Contact
+            WHERE (c.id = Contact.id OR c.id = Contact.linkedId) 
+            AND email IS NOT NULL
+        ) AS "emails",
+        ARRAY(
+            SELECT DISTINCT phoneNumber
+            FROM Contact
+            WHERE (c.id = Contact.id OR c.id = Contact.linkedId)
+            AND phoneNumber IS NOT NULL
+        ) AS "phoneNumbers",
+        ARRAY(
+            SELECT DISTINCT id
+            FROM Contact
+            WHERE linkedId = c.id
+        ) AS "secondaryContactIds"
+    FROM
+        Contact c
+    WHERE
+        c.email = $1;
+`;
+
 
     const result = await pool.query(query, [email]);
 
@@ -77,16 +106,31 @@ async function getContactDataByphoneNumber(phoneNumber) {
   try {
     // Retrieve data for the primary contact and its associated secondary contacts
     const query = `
-          SELECT
-          c.id AS "primaryContactId",
-            ARRAY(SELECT DISTINCT email FROM Contact WHERE id = c.id AND email IS NOT NULL) AS "emails",
-            ARRAY(SELECT DISTINCT phoneNumber FROM Contact WHERE id = c.id AND phoneNumber IS NOT NULL) AS "phoneNumbers",
-            ARRAY(SELECT DISTINCT id FROM Contact WHERE linkedId = c.id) AS "secondaryContactIds"
-          FROM
-            Contact c
-          WHERE
-          c.phoneNumber = $1;
-                          `;
+    SELECT
+        c.id AS "primaryContactId",
+        ARRAY(
+            SELECT DISTINCT email
+            FROM Contact
+            WHERE (c.id = Contact.id OR c.id = Contact.linkedId) 
+            AND email IS NOT NULL
+        ) AS "emails",
+        ARRAY(
+            SELECT DISTINCT phoneNumber
+            FROM Contact
+            WHERE (c.id = Contact.id OR c.id = Contact.linkedId)
+            AND phoneNumber IS NOT NULL
+        ) AS "phoneNumbers",
+        ARRAY(
+            SELECT DISTINCT id
+            FROM Contact
+            WHERE linkedId = c.id
+        ) AS "secondaryContactIds"
+    FROM
+        Contact c
+    WHERE
+        c.phoneNumber = $1;
+`;
+
 
     const result = await pool.query(query, [phoneNumber]);
 
@@ -178,7 +222,7 @@ router.post("/identify", (request, response, next) => {
 
     const existenceStatus = result.rows[0].existence_status;
     console.log(existenceStatus);
-    if (existenceStatus == "none_exist" || ( existenceStatus == "phone_number_exists" & email==null ) || ( existenceStatus == "email_exists" & phoneNumber==null ) ) {
+    if (existenceStatus == "none_exist" || ( existenceStatus == "phone_number_exists" && email==null ) || ( existenceStatus == "email_exists" && phoneNumber==null ) ) {
       const linkprecedence = "primary";
       if(existenceStatus=="none_exist"){
       pool.query(
